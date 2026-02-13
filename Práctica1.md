@@ -66,7 +66,7 @@ ansible --version
 python3 --version
 
 # Verificar que pip está disponible
-pip3 --version
+pip --version
 ```
 
 ---
@@ -80,7 +80,7 @@ La colección `google.cloud` de Ansible Galaxy proporciona todos los módulos ne
 Los módulos de GCP dependen de las bibliotecas `requests` (para llamadas HTTP) y `google-auth` (para la autenticación OAuth2 con la API de Google):
 
 ```bash
-pip3 install requests google-auth --user
+pip install requests google-auth --user
 ```
 
 ### 3.2 Instalar la Colección desde Ansible Galaxy
@@ -176,9 +176,7 @@ chmod 600 ~/ansible-sa-key.json
 ```
 
 > **⚠️ Buena Práctica de Seguridad:** Este archivo JSON contiene credenciales sensibles. **Nunca** lo incluyas en un repositorio de control de versiones (Git). Considera cifrar el archivo con `ansible-vault`:
-> ```bash
-> ansible-vault encrypt ~/ansible-sa-key.json
-> ```
+
 
 ---
 
@@ -257,7 +255,7 @@ Contenido de `all.yml`:
 
 ```yaml
 # Variables globales del proyecto Ansible-GCP
-gcp_project: banded-pad-481109-q1
+gcp_project: YOUR_PROJECT_ID
 gcp_region: us-central1
 gcp_zone: us-central1-a
 gcp_credentials_file: "{{ playbook_dir }}/../group_vars/ansible-sa-key.json"
@@ -277,7 +275,7 @@ nano inventory/gcp.yml
 # Inventario de infraestructura GCP
 all:
   vars:
-    gcp_project: banded-pad-481109-q1
+    gcp_project: YOUR_PROJECT_ID
     gcp_region: us-central1
     gcp_zone: us-central1-a
     gcp_credentials_file: "{{ playbook_dir }}/../group_vars/ansible-sa-key.json"
@@ -306,7 +304,7 @@ nano playbooks/create_vm.yml
 
   vars:
     instance_name: ans-test1          # Nombre de la instancia
-    machine_type: e2-micro            # Tipo de máquina (capa gratuita)
+    machine_type: e2-micro            # Tipo de máquina (free-tier)
     disk_size_gb: 10                  # Tamaño del disco en GB
 
   tasks:
@@ -372,7 +370,7 @@ Añadimos las variables SSH al inventario:
 # Inventario de infraestructura GCP (con variables SSH)
 all:
   vars:
-    gcp_project: banded-pad-481109-q1
+    gcp_project: YOUR_PROJECT_ID
     gcp_region: us-central1
     gcp_zone: us-central1-a
     gcp_credentials_file: "{{ playbook_dir }}/../group_vars/ansible-sa-key.json"
@@ -438,7 +436,7 @@ Archivo de inventario modificado completo:
 # Inventario completo de infraestructura GCP
 all:
   vars:
-    gcp_project: banded-pad-481109-q1
+    gcp_project: YOUR_PROJECT_ID
     gcp_region: us-central1
     gcp_zone: us-central1-a
     gcp_credentials_file: "{{ playbook_dir }}/../group_vars/ansible-sa-key.json"
@@ -535,7 +533,12 @@ docker --version
 docker-compose --version
 docker ps
 ```
+Y adicionalmente, en preparación de la práctica 2 (autenticar docker con el Artifact Registry):
+```bash
+gcloud auth configure-docker us-central1-docker.pkg.dev
 
+exit
+```
 ---
 
 ## 9. Despliegue de un Contenedor en la Máquina Remota
