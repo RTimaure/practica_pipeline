@@ -1,0 +1,48 @@
+name: Deploy Crypto Chatbot containers
+  hosts: all
+  become: true
+
+  vars:
+    registry_base: "us-central1-docker.pkg.dev/savvy-music-481715-s3/agent-repo"
+    docker_network: "chatbot-network"
+
+  tasks:
+
+    - name: Crear red Docker
+      community.docker.docker_network:
+        name: "{{ docker_network }}"
+        state: present
+
+    - name: Desplegar backend
+      community.docker.docker_container:
+        name: agent-backend
+        image: "{{ registry_base }}/agent-backend:{{ image_tag }}"
+        state: started
+        restart_policy: always
+        pull: true
+        recreate: true
+        networks:
+          - name: "{{ docker_network }}"
+        ports:
+          - "8000:80"
+
+    - name: Desplegar frontend
+      community.docker.docker_container:
+        name: agent-frontend
+        image: "{{ registry_base }}/agent-frontend:{{ image_tag }}"
+        state: started
+        restart_policy: always
+        pull: true
+        recreate: true
+        networks:
+          - name: "{{ docker_network }}"
+        ports:
+          - "80:80"
+
+    - name: Verificar contenedores
+      command: docker ps --format "{{ '{{' }}.Names{{ '}}' }} - {{ '{{' }}.Status{{ '}}' }} - {{ '{{' }}.Image{{ '}}' }}"
+      register: docker_status
+
+    - name: Mostrar estado
+      debug:
+        msg: "{{ docker_status.stdout_lines }}"
