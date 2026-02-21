@@ -55,11 +55,6 @@ jobs:
             -t ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-backend:latest \
             backend/
 
-      - name: Push backend image
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-backend:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-backend:latest
-
       # ─────────────────────────────────────
       #  Escaneo de seguridad — Backend
       # ─────────────────────────────────────
@@ -71,6 +66,11 @@ jobs:
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+          
+      - name: Push backend image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-backend:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-backend:latest
 
       # ─────────────────────────────────────
       # Build y Push — Frontend (Nginx)
@@ -81,12 +81,6 @@ jobs:
             -t ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-frontend:${{ github.sha }} \
             -t ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-frontend:latest \
             frontend/
-
-      - name: Push frontend image
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-frontend:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-frontend:latest
-
       # ─────────────────────────────────────
       #  Escaneo de seguridad — Frontend
       # ─────────────────────────────────────
@@ -98,6 +92,14 @@ jobs:
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+
+        
+      - name: Push frontend image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-frontend:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ secrets.PROJECT_ID }}/${{ env.REPO }}/agent-frontend:latest
+
+
       # ─────────────────────────────────────
       # Instalar Ansible y plugin de GKE
       # ─────────────────────────────────────
